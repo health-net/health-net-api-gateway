@@ -1,7 +1,10 @@
 {
   "name": "health-net-backend-api-gateway",
   "description": "Express Gateway Instance Bootstraped from Command Line",
-  "repository": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/health-net/health-net-backend-api-gateway.git"
+  },
   "license": "GPL-3.0",
   "version": "1.0.0",
   "main": "server.js",
