@@ -4,17 +4,24 @@ admin:
   port: 9876
   host: localhost
 apiEndpoints:
-  # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/apiEndpoints
+  patients:
+    host: localhost
+    paths: /patients
 serviceEndpoints:
-  # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
+  patients:
+    url: ${PATIENTS_URL:-http://localhost:3000}
 policies:
-  - basic-auth
-  - cors
-  - expression
-  - key-auth
   - log
-  - oauth2
   - proxy
-  - rate-limit
 pipelines:
-  # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
+  default:
+    apiEndpoints:
+      - patients
+    policies:
+      - log:
+        - action:
+            message: ${req.method} ${req.originalUrl} ${res.statusCode}
+      - proxy:
+        - action:
+            serviceEndpoint: patients
+            changeOrigin: true
