@@ -11,6 +11,7 @@ serviceEndpoints:
   patients:
     url: ${PATIENTS_URL:-http://localhost:3000}
 policies:
+  - jwt
   - log
   - proxy
 pipelines:
@@ -18,6 +19,10 @@ pipelines:
     apiEndpoints:
       - patients
     policies:
+      - jwt:
+        - action:
+            secretOrPublicKey: ${SECRET_KEY}
+            checkCredentialExistence: false
       - log:
         - action:
             message: ${req.method} ${req.originalUrl} ${res.statusCode}
