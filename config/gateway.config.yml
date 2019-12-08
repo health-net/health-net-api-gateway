@@ -1,21 +1,33 @@
 http:
-  port: 8080
+  port: ${HTTP_PORT:-8080}
+  host: localhost
 admin:
-  port: 9876
+  port: ${ADMIN_PORT:-9876}
   host: localhost
 apiEndpoints:
   patients:
     host: localhost
     paths: /patients
+  staff:
+    host: localhost
+    paths: /staff
+  login:
+    host: localhost
+    paths: /login
 serviceEndpoints:
   patients:
     url: ${PATIENTS_URL:-http://localhost:3000}
+  staff:
+    url: ${STAFF_URL:-http://localhost:4000}
+  login:
+    url: ${LOGIN_URL:-http://localhost:5000}
 policies:
+  - oauth2-introspect
   - jwt
   - log
   - proxy
 pipelines:
-  default:
+  patients:
     apiEndpoints:
       - patients
     policies:
@@ -30,3 +42,11 @@ pipelines:
         - action:
             serviceEndpoint: patients
             changeOrigin: true
+  login:
+    apiEndpoints:
+      - login
+    policies:
+        - log:
+           - action:
+               message: ${req.method} ${req.originalUrl} ${res.statusCode}
+ 
