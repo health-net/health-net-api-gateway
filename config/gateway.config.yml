@@ -49,4 +49,7 @@ pipelines:
         - log:
            - action:
                message: ${req.method} ${req.originalUrl} ${res.statusCode}
- 
+        - proxy:
+           - action:
+                serviceEndpoint: login
+                changeOrigin: true
