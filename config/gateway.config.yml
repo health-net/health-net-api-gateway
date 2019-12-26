@@ -22,7 +22,6 @@ serviceEndpoints:
   login:
     url: ${LOGIN_URL:-http://localhost:5000}
 policies:
-  - oauth2-introspect
   - jwt
   - log
   - proxy
@@ -33,7 +32,7 @@ pipelines:
     policies:
       - jwt:
         - action:
-            secretOrPublicKey: ${SECRET_KEY}
+            secretOrPublicKeyFile: ./keys/staff.pem
             checkCredentialExistence: false
       - log:
         - action:
