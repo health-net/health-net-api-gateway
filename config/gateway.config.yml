@@ -5,50 +5,48 @@ admin:
   port: ${ADMIN_PORT:-9876}
   host: localhost
 apiEndpoints:
+  account:
+    host: localhost
+    methods: 'POST'
+    paths: /account/*
   patients:
     host: localhost
-    paths: /patients
-  staff:
-    host: localhost
-    paths: /staff
-  login:
-    host: localhost
-    paths: /login
+    paths: ['/patients', '/patients/*']
 serviceEndpoints:
+  account:
+    url: ${ACCOUNT_URL:-http://localhost:5000}
   patients:
     url: ${PATIENTS_URL:-http://localhost:3000}
-  staff:
-    url: ${STAFF_URL:-http://localhost:4000}
-  login:
-    url: ${LOGIN_URL:-http://localhost:5000}
 policies:
   - jwt
   - log
   - proxy
 pipelines:
+  default:
+    apiEndpoints:
+      - patients
+      - account
+    policies:
+      - log:
+        - action:
+            message: ${req.method} ${req.originalUrl} ${res.statusCode}
   patients:
     apiEndpoints:
       - patients
     policies:
       - jwt:
         - action:
-            secretOrPublicKeyFile: ./keys/staff.pem
+            secretOrPublicKeyFile: ./keys/public-key.pem
             checkCredentialExistence: false
-      - log:
-        - action:
-            message: ${req.method} ${req.originalUrl} ${res.statusCode}
       - proxy:
         - action:
             serviceEndpoint: patients
             changeOrigin: true
-  login:
+  account:
     apiEndpoints:
-      - login
+      - account
     policies:
-        - log:
-           - action:
-               message: ${req.method} ${req.originalUrl} ${res.statusCode}
         - proxy:
            - action:
-                serviceEndpoint: login
+                serviceEndpoint: account
                 changeOrigin: true
