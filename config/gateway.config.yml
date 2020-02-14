@@ -6,17 +6,27 @@ admin:
   host: localhost
 apiEndpoints:
   account:
-    host: localhost
-    methods: 'POST'
-    paths: /account/*
+    host: '*'
+    paths: ['/account/*']
+  users:
+    host: '*'
+    paths: ['/users/*']
   patients:
-    host: localhost
-    paths: ['/patients', '/patients/*']
+    host: '*'
+    paths: ['/patients/*']
+  devices:
+    host: '*'
+    paths: ['/devices','/devices/*']
 serviceEndpoints:
   account:
-    url: ${ACCOUNT_URL:-http://localhost:5000}
+    url: ${ACCOUNT_URL:-http://localhost:2000}
+  users:
+    url: ${USERS_URL:-http://localhost:3000}
   patients:
-    url: ${PATIENTS_URL:-http://localhost:3000}
+    url: ${PATIENTS_URL:-http://localhost:4000}
+  devices:
+    url: ${DEVICES_URL:-http://localhost:5000}
+
 policies:
   - jwt
   - log
@@ -24,29 +34,53 @@ policies:
 pipelines:
   default:
     apiEndpoints:
-      - patients
       - account
+      - users
+      - patients
+      - devices
     policies:
       - log:
         - action:
             message: ${req.method} ${req.originalUrl} ${res.statusCode}
-  patients:
+  authorization:
     apiEndpoints:
+      - users
       - patients
+      - devices
     policies:
       - jwt:
         - action:
             secretOrPublicKeyFile: ./keys/public-key.pem
             checkCredentialExistence: false
-      - proxy:
-        - action:
-            serviceEndpoint: patients
-            changeOrigin: true
   account:
     apiEndpoints:
       - account
     policies:
-        - proxy:
-           - action:
-                serviceEndpoint: account
-                changeOrigin: true
+      - proxy:
+        - action:
+            serviceEndpoint: account
+            changeOrigin: true
+  users:
+    apiEndpoints:
+      - users
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: users
+            changeOrigin: true
+  patients:
+    apiEndpoints:
+      - patients
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: patients
+            changeOrigin: true
+  devices:
+    apiEndpoints:
+      - devices
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: devices
+            changeOrigin: true
