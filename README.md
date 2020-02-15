@@ -30,7 +30,7 @@ SERVICE_PORT=3000 ... npm start
 ### Environment Variables
 | Name          | Description                     | Default value                                    |
 |---------------|---------------------------------|--------------------------------------------------|
-| HTTP_PORT     | Service port                    | 8080                                             |
+| PORT     | Service port                    | 8080                                             |
 | ADMIN_PORT    | Admin port                      | 9876 |
 | ACCOUNT_URL | Account service url | http://localhost:2000 |
 | USERS_URL | Users service url | http://localhost:3000 |
