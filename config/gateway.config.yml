@@ -7,13 +7,13 @@ admin:
 apiEndpoints:
   account:
     host: '*'
-    paths: ['/account/*']
+    paths: ['/account','/account/*']
   users:
     host: '*'
-    paths: ['/users/*']
+    paths: ['/users','/users/*']
   patients:
     host: '*'
-    paths: ['/patients/*']
+    paths: ['/account','/patients/*']
   devices:
     host: '*'
     paths: ['/devices','/devices/*']
