@@ -13,7 +13,7 @@ apiEndpoints:
     paths: ['/users','/users/*']
   patients:
     host: '*'
-    paths: ['/account','/patients/*']
+    paths: ['/patients','/patients/*']
   devices:
     host: '*'
     paths: ['/devices','/devices/*']
