@@ -5,50 +5,82 @@ admin:
   port: ${ADMIN_PORT:-9876}
   host: localhost
 apiEndpoints:
+  account:
+    host: '*'
+    paths: ['/account/*']
+  users:
+    host: '*'
+    paths: ['/users/*']
   patients:
-    host: localhost
-    paths: /patients
-  staff:
-    host: localhost
-    paths: /staff
-  login:
-    host: localhost
-    paths: /login
+    host: '*'
+    paths: ['/patients/*']
+  devices:
+    host: '*'
+    paths: ['/devices','/devices/*']
 serviceEndpoints:
+  account:
+    url: ${ACCOUNT_URL:-http://localhost:2000}
+  users:
+    url: ${USERS_URL:-http://localhost:3000}
   patients:
-    url: ${PATIENTS_URL:-http://localhost:3000}
-  staff:
-    url: ${STAFF_URL:-http://localhost:4000}
-  login:
-    url: ${LOGIN_URL:-http://localhost:5000}
+    url: ${PATIENTS_URL:-http://localhost:4000}
+  devices:
+    url: ${DEVICES_URL:-http://localhost:5000}
+
 policies:
   - jwt
   - log
   - proxy
 pipelines:
+  default:
+    apiEndpoints:
+      - account
+      - users
+      - patients
+      - devices
+    policies:
+      - log:
+        - action:
+            message: ${req.method} ${req.originalUrl} ${res.statusCode}
+  authorization:
+    apiEndpoints:
+      - users
+      - patients
+      - devices
+    policies:
+      - jwt:
+        - action:
+            secretOrPublicKeyFile: ./keys/public-key.pem
+            checkCredentialExistence: false
+  account:
+    apiEndpoints:
+      - account
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: account
+            changeOrigin: true
+  users:
+    apiEndpoints:
+      - users
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: users
+            changeOrigin: true
   patients:
     apiEndpoints:
       - patients
     policies:
-      - jwt:
-        - action:
-            secretOrPublicKeyFile: ./keys/staff.pem
-            checkCredentialExistence: false
-      - log:
-        - action:
-            message: ${req.method} ${req.originalUrl} ${res.statusCode}
       - proxy:
         - action:
             serviceEndpoint: patients
             changeOrigin: true
-  login:
+  devices:
     apiEndpoints:
-      - login
+      - devices
     policies:
-        - log:
-           - action:
-               message: ${req.method} ${req.originalUrl} ${res.statusCode}
-        - proxy:
-           - action:
-                serviceEndpoint: login
-                changeOrigin: true
+      - proxy:
+        - action:
+            serviceEndpoint: devices
+            changeOrigin: true
