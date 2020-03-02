@@ -9,7 +9,9 @@
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
-    "express-gateway": "^1.16.9",
-    "firebase-admin": "^8.7.0"
+    "express-gateway": "^1.16.9"
+  },
+  "engines": {
+	"node": "12.x"
   }
 }
