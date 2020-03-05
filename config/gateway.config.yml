@@ -42,16 +42,6 @@ pipelines:
       - log:
         - action:
             message: ${req.method} ${req.originalUrl} ${res.statusCode}
-  authorization:
-    apiEndpoints:
-      - users
-      - patients
-      - devices
-    policies:
-      - jwt:
-        - action:
-            secretOrPublicKeyFile: ./keys/public-key.pem
-            checkCredentialExistence: false
   account:
     apiEndpoints:
       - account
@@ -64,6 +54,10 @@ pipelines:
     apiEndpoints:
       - users
     policies:
+      - jwt:
+        - action:
+            secretOrPublicKeyFile: ./keys/public-key.pem
+            checkCredentialExistence: false
       - proxy:
         - action:
             serviceEndpoint: users
@@ -72,6 +66,10 @@ pipelines:
     apiEndpoints:
       - patients
     policies:
+      - jwt:
+        - action:
+            secretOrPublicKeyFile: ./keys/public-key.pem
+            checkCredentialExistence: false
       - proxy:
         - action:
             serviceEndpoint: patients
@@ -80,6 +78,10 @@ pipelines:
     apiEndpoints:
       - devices
     policies:
+      - jwt:
+        - action:
+            secretOrPublicKeyFile: ./keys/public-key.pem
+            checkCredentialExistence: false
       - proxy:
         - action:
             serviceEndpoint: devices
